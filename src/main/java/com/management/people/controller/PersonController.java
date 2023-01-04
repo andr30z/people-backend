@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.management.people.dto.CreatePersonDTO;
+import com.management.people.dto.PaginationResponse;
 import com.management.people.model.Person;
 import com.management.people.service.PersonService;
+
+import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api/v1/person")
@@ -37,6 +41,14 @@ public class PersonController {
     @GetMapping("/{personId}")
     public Person getPerson(@PathVariable(name = "personId") Long personId) {
         return this.personService.getPersonById(personId);
+    }
+
+    @Validated
+    @GetMapping
+    public PaginationResponse<Person> getPersons(
+            @Positive @RequestParam(name = "perPage", defaultValue = "15") int perPage,
+            @Positive @RequestParam(name = "page", defaultValue = "1") int page) {
+        return this.personService.getPersons(page, perPage);
     }
 
 }
