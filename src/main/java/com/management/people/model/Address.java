@@ -8,14 +8,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "person_id", "is_favorite" }) })
+@Table
 public class Address {
 
     @Id
@@ -23,8 +24,6 @@ public class Address {
     @Column(nullable = false)
     private Long id;
 
-    @Column(name = "is_favorite")
-    private boolean isFavorite;
 
     @Column(name = "public_place")
     private String publicPlace; // logradouro

@@ -9,7 +9,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,10 @@ public class Person {
 
     private String name;
     private Date birthDate;
+    
+    @OneToOne
+    @JoinColumn(name = "favorite_address_id", nullable = true)
+    private Address favoriteAddress;
 
     @OneToMany(mappedBy = "addressOwner")
     private Set<Address> addresses = new HashSet<>();
