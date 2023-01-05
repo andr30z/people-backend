@@ -8,7 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AddressRepository extends JpaRepository<Address, Long> {
   Optional<Address> findByAddressOwnerAndId(Person addressOwner, Long id);
 
-  Optional<Address> findByIdAndIsMainAddress(Long id, boolean isMainAddress);
-
-  Optional<Address> findByAddressOwnerAndIsMainAddress(Person addressOwner, boolean isMainAddress);
+  Optional<Address> findByAddressOwnerAndIsMainAddressTrue(Person addressOwner);
 }

@@ -95,7 +95,7 @@ public class AddressServiceImpl implements AddressService {
     Person currentPerson = this.personService.getPersonById(personId);
 
     Optional<Address> mainAddress = this.addressRepository
-        .findByAddressOwnerAndIsMainAddress(currentPerson, true);
+        .findByAddressOwnerAndIsMainAddressTrue(currentPerson);
 
     List<Address> addressesToSave = new ArrayList<>();
 
@@ -113,7 +113,7 @@ public class AddressServiceImpl implements AddressService {
   public Address removeMainAddress(Long personId) {
 
     Person currentPerson = this.personService.getPersonById(personId);
-    Address mainAddress = this.addressRepository.findByAddressOwnerAndIsMainAddress(currentPerson, true)
+    Address mainAddress = this.addressRepository.findByAddressOwnerAndIsMainAddressTrue(currentPerson)
         .orElseThrow(() -> new ResourceNotFoundException(
             "The person with ID: " + personId + " does not have an address marked as main!"));
 
