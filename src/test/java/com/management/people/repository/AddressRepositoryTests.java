@@ -1,87 +1,109 @@
 package com.management.people.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.management.people.model.Address;
 import com.management.people.model.Person;
 
 @DataJpaTest
+@TestInstance(Lifecycle.PER_CLASS)
 public class AddressRepositoryTests {
 
-    @Autowired
-    private AddressRepository underTest;
+        @Autowired
+        private AddressRepository underTest;
 
-    @Autowired
-    private PersonRepository personRepository;
-
-    @Test
-    void itShouldFindByAddressOwnerAndIsMainAddressTrue() {
-        var person = new Person(1L, "Test", new Date(), new HashSet<>());
-        personRepository.save(person);
+        @Autowired
+        private PersonRepository personRepository;
+        private final Person person = new Person(1L, "Test", new Date(), new HashSet<>());
+        private final Person person2 = new Person(2L, "Test2", new Date(), new HashSet<>());
         List<Address> addresses = List.of(
-                Address.builder()
-                        .id(1L)
-                        .addressOwner(person)
-                        .city("Luziânia")
-                        .cep("999999").isMainAddress(false)
-                        .publicPlace("Teste")
-                        .build(),
-                Address.builder()
-                        .id(2L)
-                        .addressOwner(person)
-                        .city("Luziânia")
-                        .cep("999998")
-                        .isMainAddress(true)
-                        .publicPlace("Teste2")
-                        .build());
+                        Address.builder()
+                                        .id(1L)
+                                        .addressOwner(person)
+                                        .city("Luziânia")
+                                        .cep("999999").isMainAddress(false)
+                                        .publicPlace("Teste")
+                                        .build(),
+                        Address.builder()
+                                        .id(2L)
+                                        .addressOwner(person)
+                                        .city("Luziânia")
+                                        .cep("999998")
+                                        .isMainAddress(true)
+                                        .publicPlace("Teste2")
+                                        .build(),
+                        Address.builder()
+                                        .id(3L)
+                                        .addressOwner(person2)
+                                        .city("Luziânia")
+                                        .cep("999998")
+                                        .isMainAddress(true)
+                                        .publicPlace("Teste2")
+                                        .build());
 
-        this.underTest.saveAll(addresses);
+        @BeforeAll
+        void setUp() {
+                this.personRepository.saveAll(List.of(person, person2));
+                this.underTest.saveAll(addresses);
+        }
 
-        Optional<Address> result = underTest.findByAddressOwnerAndIsMainAddressTrue(person);
+        @AfterAll
+        void close() {
+                this.personRepository.deleteAll();
+                this.underTest.deleteAll();
+        }
 
-        assertEquals(result.isPresent(), true);
-        assertEquals(result.get(), addresses.get(1));
+        @Test
+        void itShouldFindByAddressOwnerAndIsMainAddressTrue() {
+                personRepository.save(person);
 
-    }
+                Optional<Address> result = underTest.findByAddressOwnerAndIsMainAddressTrue(person);
 
-    @Test
-    void itShouldFindByAddressOwnerAndId() {
-        var person = new Person(1L, "Test", new Date(), new HashSet<>());
-        personRepository.save(person);
-        List<Address> addresses = List.of(
-                Address.builder()
-                        .id(1L)
-                        .addressOwner(person)
-                        .city("Luziânia")
-                        .cep("999999").isMainAddress(false)
-                        .publicPlace("Teste")
-                        .build(),
-                Address.builder()
-                        .id(2L)
-                        .addressOwner(person)
-                        .city("Luziânia")
-                        .cep("999998")
-                        .isMainAddress(true)
-                        .publicPlace("Teste2")
-                        .build());
+                assertEquals(result.isPresent(), true);
+                assertEquals(result.get(), addresses.get(1));
+        }
 
-        this.underTest.saveAll(addresses);
+        @Test
+        void itShouldFindAllByOwner() {
+                Pageable paging = PageRequest.of(0, 3);
+                Page<Address> result = underTest.findAllByAddressOwner(person, paging);
+                List<Address> addressesResults = result.get().collect(Collectors.toList());
+                assertTrue(addressesResults.containsAll(
+                                List.of(addresses.get(0),
+                                                addresses.get(1))));
+                assertFalse(addressesResults.contains(addresses.get(2)));
 
-        Address currentAddress = addresses.get(0);
-        Optional<Address> result = underTest.findByAddressOwnerAndId(person,
-                currentAddress.getId());
+        }
 
-        assertEquals(result.isPresent(), true);
-        assertEquals(result.get(), currentAddress);
+        @Test
+        void itShouldFindByAddressOwnerAndId() {
 
-    }
+                Address currentAddress = addresses.get(0);
+                Optional<Address> result = underTest.findByAddressOwnerAndId(person,
+                                currentAddress.getId());
+
+                assertEquals(result.isPresent(), true);
+                assertEquals(result.get(), currentAddress);
+
+        }
+
 }

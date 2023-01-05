@@ -64,7 +64,9 @@ public class AddressServiceImpl implements AddressService {
       Long personId,
       int page,
       int perPage) {
-    Page<Address> addressPage = this.addressRepository.findAll(PageRequest.of(page - 1, perPage));
+
+    Person person = this.personService.getPersonById(personId);
+    Page<Address> addressPage = this.addressRepository.findAllByAddressOwner(person, PageRequest.of(page - 1, perPage));
     return PaginationResponseFactory.create(addressPage);
   }
 
