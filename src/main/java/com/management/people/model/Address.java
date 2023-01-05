@@ -24,9 +24,11 @@ public class Address {
     @Column(nullable = false)
     private Long id;
 
-
     @Column(name = "public_place")
     private String publicPlace; // logradouro
+
+    @Column(name = "is_main_address")
+    private boolean isMainAddress;
 
     private String cep;
 

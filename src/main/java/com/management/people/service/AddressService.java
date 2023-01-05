@@ -8,16 +8,18 @@ public interface AddressService {
   Address createAddress(Long personId, CreateAddressDTO createAddressDTO);
 
   Address updateAddress(
-    Long personId,
-    Long addressId,
-    CreateAddressDTO createAddressDTO
-  );
+      Long personId,
+      Long addressId,
+      CreateAddressDTO createAddressDTO);
 
   PaginationResponse<Address> getAddressesByPersonId(
-    Long personId,
-    int page,
-    int perPage
-  );
+      Long personId,
+      int page,
+      int perPage);
 
   Address getAddressById(Long addressId);
+
+  Address markMainAddress(Long personId, Long addressId);
+
+  Address removeMainAddress(Long personId);
 }
