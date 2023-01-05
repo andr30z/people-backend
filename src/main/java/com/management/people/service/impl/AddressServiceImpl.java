@@ -16,6 +16,7 @@ import com.management.people.exception.ResourceNotFoundException;
 import com.management.people.model.Address;
 import com.management.people.model.Person;
 import com.management.people.repository.AddressRepository;
+import com.management.people.repository.PersonRepository;
 import com.management.people.service.AddressService;
 import com.management.people.service.PersonService;
 import com.management.people.util.PaginationResponseFactory;
@@ -24,13 +25,17 @@ import com.management.people.util.PaginationResponseFactory;
 public class AddressServiceImpl implements AddressService {
 
   private final AddressRepository addressRepository;
+
+  private final PersonRepository personRepository;
   private final PersonService personService;
 
   public AddressServiceImpl(
       AddressRepository addressRepository,
+      PersonRepository personRepository,
       PersonService personService) {
     this.addressRepository = addressRepository;
     this.personService = personService;
+    this.personRepository = personRepository;
   }
 
   @Override
@@ -48,7 +53,10 @@ public class AddressServiceImpl implements AddressService {
     var address = new Address();
     BeanUtils.copyProperties(createAddressDTO, address);
     address.setAddressOwner(person);
-    return this.addressRepository.save(address);
+    Address savedAddress = this.addressRepository.save(address);
+    person.getAddresses().add(savedAddress);
+    personRepository.save(person);
+    return savedAddress;
   }
 
   @Override

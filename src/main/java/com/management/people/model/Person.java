@@ -1,9 +1,13 @@
 package com.management.people.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Person {
+public class Person implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -27,7 +31,7 @@ public class Person {
 
     private String name;
     private Date birthDate;
-
-    @OneToMany(mappedBy = "addressOwner")
-    private Set<Address> addresses = new HashSet<>();
+    @JsonManagedReference
+    @OneToMany(mappedBy = "addressOwner", cascade = CascadeType.ALL)
+    private Set<Address> addresses = new HashSet<Address>();
 }
