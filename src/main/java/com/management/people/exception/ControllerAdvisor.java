@@ -1,5 +1,6 @@
 package com.management.people.exception;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -16,17 +17,30 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.management.people.dto.ApiError;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 @Slf4j
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
+
+
+        @ExceptionHandler(ConstraintViolationException.class)
+        public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException exception,
+                ServletWebRequest webRequest) throws IOException {
+                        return buildResponseEntity(
+                                HttpStatus.BAD_REQUEST,
+                                exception.getMessage(),
+                                Collections.singletonList(exception.getMessage()));
+        }
+
         @ExceptionHandler(ResourceNotFoundException.class)
         public ResponseEntity<Object> handleEntityNotFoundException(
                         ResourceNotFoundException exception) {

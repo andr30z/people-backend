@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/address")
 public class AddressController {
@@ -30,8 +31,8 @@ public class AddressController {
   @GetMapping("/persons/{personId}")
   public PaginationResponse<Address> getAddressByPeron(
       @PathVariable(name = "personId") Long personId,
-      @Positive @RequestParam(name = "page", defaultValue = "1") int page,
-      @Positive @RequestParam(name = "perPage", defaultValue = "15") int perPage) {
+      @Positive(message = "perPage must be a positive number") @RequestParam(name = "page", defaultValue = "1") Integer page,
+      @Positive(message = "page must be a positive number") @RequestParam(name = "perPage", defaultValue = "15") Integer perPage) {
     return this.addressService.getAddressesByPersonId(personId, page, perPage);
   }
 
