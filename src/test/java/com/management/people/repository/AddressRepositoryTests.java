@@ -74,8 +74,6 @@ public class AddressRepositoryTests {
 
         @Test
         void itShouldFindByAddressOwnerAndIsMainAddressTrue() {
-                personRepository.save(person);
-
                 Optional<Address> result = underTest.findByAddressOwnerAndIsMainAddressTrue(person);
 
                 assertEquals(result.isPresent(), true);
@@ -87,10 +85,13 @@ public class AddressRepositoryTests {
                 Pageable paging = PageRequest.of(0, 3);
                 Page<Address> result = underTest.findAllByAddressOwner(person, paging);
                 List<Address> addressesResults = result.get().collect(Collectors.toList());
-                assertTrue(addressesResults.containsAll(
-                                List.of(addresses.get(0),
-                                                addresses.get(1))));
-                assertFalse(addressesResults.contains(addresses.get(2)));
+
+                Address addressOwnedBySomeoneElse = addresses.get(2);
+                List<Address> addressesOwnedByTestPerson = List.of(addresses.get(0),
+                                addresses.get(1));
+
+                assertTrue(addressesResults.containsAll(addressesOwnedByTestPerson));
+                assertFalse(addressesResults.contains(addressOwnedBySomeoneElse));
 
         }
 
