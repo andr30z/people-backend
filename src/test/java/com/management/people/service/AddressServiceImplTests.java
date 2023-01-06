@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.management.people.dto.CreateAddressDTO;
+import com.management.people.dto.PaginationResponse;
 import com.management.people.exception.ResourceNotFoundException;
 import com.management.people.model.Address;
 import com.management.people.model.Person;
@@ -33,6 +34,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class AddressServiceImplTests {
@@ -51,6 +55,9 @@ public class AddressServiceImplTests {
 
   @Captor
   ArgumentCaptor<Address> addressCaptor;
+
+  @Captor
+  private ArgumentCaptor<Pageable> pageableArgumentCaptor;
 
   private AddressServiceImpl underTest;
 
@@ -97,6 +104,31 @@ public class AddressServiceImplTests {
     Address address = underTest.getAddressById(testPerson.getId());
     verify(addressRepository, times(1)).findById(anyLong());
     assertEquals(address, testAddress);
+  }
+
+  @Test
+  void itShouldFindAddressesByPersonId() {
+    var addressCopy = new Address();
+    BeanUtils.copyProperties(testAddress, addressCopy);
+    addressCopy.setId(23443L);
+    List<Address> allAddresses = List.of(testAddress, addressCopy);
+    Pageable pageable = PageRequest.of(0, 3);
+    when(addressRepository.findAllByAddressOwner(any(), any()))
+      .thenReturn(new PageImpl<>(allAddresses, pageable, 2));
+
+    PaginationResponse<Address> persons = underTest.getAddressesByPersonId(
+      testPerson.getId(),
+      1,
+      2
+    );
+    verify(addressRepository, times(1))
+      .findAllByAddressOwner(any(), pageableArgumentCaptor.capture());
+    Pageable capturedPageable = pageableArgumentCaptor.getValue();
+    // testing for 0 because the index for database pageable queries starts at 0 and
+    // I'm passing 1 as page (1-1 = first page)
+    assertEquals(capturedPageable.getPageNumber(), 0);
+    assertEquals(capturedPageable.getPageSize(), 2);
+    assertEquals(allAddresses, persons.getData());
   }
 
   @Test

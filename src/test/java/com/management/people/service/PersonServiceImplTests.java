@@ -140,7 +140,6 @@ public class PersonServiceImplTests {
     Pageable capturedPageable = pageableArgumentCaptor.getValue();
     // testing for 0 because the index for database pageable queries starts at 0 and
     // I'm passing 1 as page (1-1 = first page)
-    System.out.println(pageable);
     assertEquals(capturedPageable.getPageNumber(), 0);
     assertEquals(capturedPageable.getPageSize(), 15);
     assertEquals(allPersons, persons.getData());
