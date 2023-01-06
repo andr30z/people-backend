@@ -68,7 +68,7 @@ public class AddressServiceImplTests {
     .addressOwner(testPerson)
     .city("Luziânia")
     .cep("999998")
-    .isMainAddress(true)
+    .isMainAddress(false)
     .publicPlace("Teste2")
     .build();
 
@@ -90,7 +90,7 @@ public class AddressServiceImplTests {
   }
 
   @Test
-  void itShouldGetPersonById() {
+  void itShouldGetAddressById() {
     when(addressRepository.findById(anyLong()))
       .thenReturn(Optional.of(testAddress));
 
