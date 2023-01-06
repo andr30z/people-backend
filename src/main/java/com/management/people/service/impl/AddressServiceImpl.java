@@ -106,7 +106,7 @@ public class AddressServiceImpl implements AddressService {
       addressesToSave.add(mainAddress.get());
     }
     address.setMainAddress(true);
-
+    addressesToSave.add(address);
     this.addressRepository.saveAll(addressesToSave);
     return address;
   }
