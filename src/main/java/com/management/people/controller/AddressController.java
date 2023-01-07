@@ -1,11 +1,5 @@
 package com.management.people.controller;
 
-import com.management.people.dto.CreateAddressDTO;
-import com.management.people.dto.PaginationResponse;
-import com.management.people.model.Address;
-import com.management.people.service.AddressService;
-import jakarta.validation.constraints.Positive;
-
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,6 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.management.people.dto.CreateAddressDTO;
+import com.management.people.dto.PaginationResponse;
+import com.management.people.model.Address;
+import com.management.people.service.AddressService;
+
+import jakarta.validation.constraints.Positive;
 
 @Validated
 @RestController
